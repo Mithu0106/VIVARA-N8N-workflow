@@ -1,0 +1,641 @@
+{
+  "name": "KMRL doc hub",
+  "nodes": [
+    {
+      "parameters": {
+        "downloadAttachments": true,
+        "options": {
+          "trackLastMessageId": true
+        }
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2.1,
+      "position": [
+        -3120,
+        -48
+      ],
+      "id": "72649baa-5129-4bf2-8273-e479b0439000",
+      "name": "Email Trigger (IMAP)",
+      "credentials": {
+        "imap": {
+          "id": "rhXnCv2RaC8VG1Rj",
+          "name": "IMAP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/upload",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -3120,
+        176
+      ],
+      "id": "49bdc73d-a489-42bb-acad-cc35a1b723fa",
+      "name": "Webhook",
+      "webhookId": "6fc6490c-fa3b-4d87-83bc-a2cac9742d39"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2896,
+        64
+      ],
+      "id": "007ff3ce-0c75-4e1d-8f99-f16e79bcff0c",
+      "name": "Merge",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an assistant for Kochi Metro Rail Limited (KMRL).\nSummarize the following document into 3-5 bullet points with \nonly the most important actions, risks, or deadlines.\n\nReturn the result strictly in this JSON format:\n{\n  \"summary\": [\"point1\", \"point2\", \"point3\", ...],\n  \"department\": [\"Safety\", \"HR\", \"Engineering\"],\n  \"urgency\": \"Immediate | High | Normal | Informational\",\n  \"decision_support\": \"one-line action/decision\"\n}\n\nIf input is bilingual (English + Malayalam), always summarize in English.\nText:\n{{$json[\"text\"]}}\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1648,
+        192
+      ],
+      "id": "db4e9eb2-3cf4-4c83-a7e3-f4e2c9ac85fe",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "u7e6ByIWEQT0RFUa",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.department}}",
+                    "rightValue": "Engineering",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6141f6ae-2f7c-407a-907e-86120d3a94e8"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2873a675-c82f-4a8c-b872-ac3feae1248f",
+                    "leftValue": "={{$json.department}}",
+                    "rightValue": "Finance",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "25a5d8d9-1ef0-4396-9e89-70b45a6ba324",
+                    "leftValue": "={{$json.department}}",
+                    "rightValue": "HR",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c187662d-15f5-42ee-bca7-5de560abaa52",
+                    "leftValue": "={{$json.department}}",
+                    "rightValue": "Safety",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "91a32f74-01d6-402e-b63d-8011dbd52613",
+                    "leftValue": "={{$json.department}}",
+                    "rightValue": "Procurement",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "97b6e83e-934e-45bf-8258-39c7f551033b",
+                    "leftValue": "={{$json.department}}",
+                    "rightValue": "Legal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "afbf912d-75cf-44ba-a093-8b8d79dc73d7",
+                    "leftValue": "={{$json.department}}",
+                    "rightValue": "Management",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "allMatchingOutputs": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1136,
+        112
+      ],
+      "id": "236c0f51-0d4e-4f6f-9055-d011fe01d0e2",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\n// Parse the AI JSON string\nconst aiOutputStr = items[0].json.message.content;\nlet aiData = {};\ntry {\n    aiData = JSON.parse(aiOutputStr);\n} catch (err) {\n    throw new Error(\"Failed to parse AI output JSON: \" + err.message);\n}\n\n// aiData now has: summary (array), department (array), urgency, decision_support\nconst summaries = aiData.summary || [];\nconst departments = aiData.department || [];\nconst urgency = aiData.urgency || \"Normal\";\nconst decisionSupport = aiData.decision_support || \"\";\n\n// Map each department to its items\ndepartments.forEach((dept, index) => {\n    const task = summaries[index] || \"\";\n    \n    // Map department to actual email\n    let email = \"\";\n    switch(dept.toLowerCase()) {\n        case \"engineering\":\n            email = \"kmrlengineer@gmail.com\";\n            break;\n        case \"safety\":\n            email = \"kmrlsafety@gmail.com\";\n            break;\n        case \"hr\":\n            email = \"kmrlhr@gmail.com\";\n            break;\n        case \"finance\":\n            email = \"kmrlfinance@gmail.com\";\n            break;\n        default:\n            email = \"controlroom@kmrl.in\";\n    }\n\n    output.push({\n        json: {\n            department: dept,                    \n            email: email,\n            subject: `[${urgency.toUpperCase()}] KMRL Update - ${dept.toUpperCase()}`,\n            body: `Dear ${dept.toUpperCase()} Team,\\n\\nAction Item:\\n- ${task}\\n\\nDecision Support: ${decisionSupport}\\n\\nRegards,\\nKMRL AI Assistant`\n        }\n    });\n});\n\nreturn output;\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1328,
+        192
+      ],
+      "id": "3c5d3c4b-1b2c-48b3-aaac-5f05ed9703ba",
+      "name": "Code8"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json[\"email\"]}}",
+        "subject": "={{$json[\"subject\"]}}",
+        "emailType": "text",
+        "message": "={{$json[\"body\"]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -896,
+        96
+      ],
+      "id": "d089066a-7473-4d70-8e35-769920942ece",
+      "name": "Send a message",
+      "webhookId": "de7a2291-d652-48fe-8a8b-8f5dee2d34ea",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cdDNInejBkkKzu2n",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const out = [];\n\nfor (const item of items) {\n  if (!item.binary || !item.binary.attachment_0) {\n    throw new Error(\"No binary data found in item.binary.attachment_0\");\n  }\n\n  const att = item.binary.attachment_0;\n\n  out.push({\n    json: {\n      lang: 'eng+mal',\n      filename: att.fileName\n    },\n    binary: {\n      file: att   // ✅ keep binary under \"file\"\n    }\n  });\n}\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2720,
+        64
+      ],
+      "id": "e0cbff8d-1537-4755-a5e0-f1a522749d0b",
+      "name": "Code10"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ba560449-bfcd-423c-b43c-9305232f7407-00-3q6y9bd0rhl87.pike.replit.dev/",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "lang",
+              "value": "eng+mal"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2160,
+        176
+      ],
+      "id": "d33eb872-cc90-4963-8c6f-7f2404aa1456",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\nfor (const item of items) {\n  // Email attachments (array)\n  if (item.json.attachments) {\n    for (const att of item.json.attachments) {\n      const filename = att.fileName || 'email_file';\n      const ext = (filename.split('.').pop() || '').toLowerCase();\n      output.push({\n        json: {\n          filename,\n          source: 'email',\n          fileType: ext,\n          mimeType: att.mimeType || ''\n        },\n        binary: {\n          data: {\n            data: att.data,            // base64\n            mimeType: att.mimeType || 'application/octet-stream',\n            fileName: filename\n          }\n        }\n      });\n    }\n  }\n  // Webhook/manual upload (binary.file)\n  else if (item.binary && item.binary.file) {\n    const file = item.binary.file;\n    const filename = file.fileName || 'uploaded_file';\n    const ext = (filename.split('.').pop() || '').toLowerCase();\n    output.push({\n      json: {\n        filename,\n        source: 'webhook',\n        fileType: ext,\n        mimeType: file.mimeType || ''\n      },\n      binary: {\n        data: file\n      }\n    });\n  }\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2576,
+        64
+      ],
+      "id": "5f01f5ef-2900-462c-b48f-d5f4cc14505e",
+      "name": "Code12"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json[\"fileType\"]}}",
+                    "rightValue": "=pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "28c3bb10-19a4-4dcc-ad26-fe17ed1b0041"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -2400,
+        64
+      ],
+      "id": "07b288d3-0542-4c57-936e-673351e13485",
+      "name": "Switch4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdf.co/v1/pdf/convert/to/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "thaniyapratyaini05@gmail.com_Os8yv9sOOP3JEmDBlr0OpVDONuhwCvRj8SV2bDUZawQ8lEGuBXekmVKeOIpPs6ka"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{$node[\"Upload PDF1\"].json[\"url\"]}}\",\n  \"inline\": true\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1968,
+        0
+      ],
+      "id": "13ea04a4-f437-4aba-8030-23f157ecf05d",
+      "name": "HTTP Request6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdf.co/v1/file/upload",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "thaniyapratyaini05@gmail.com_Os8yv9sOOP3JEmDBlr0OpVDONuhwCvRj8SV2bDUZawQ8lEGuBXekmVKeOIpPs6ka"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2160,
+        0
+      ],
+      "id": "dd243284-57ce-4060-a0be-6e85e6d83d49",
+      "name": "Upload PDF1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1856,
+        192
+      ],
+      "id": "76a09212-b044-440a-8a92-b824b9947fc6",
+      "name": "Merge4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Email Trigger (IMAP)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code8": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code10": {
+      "main": [
+        [
+          {
+            "node": "Code12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code12": {
+      "main": [
+        [
+          {
+            "node": "Switch4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch4": {
+      "main": [
+        [
+          {
+            "node": "Upload PDF1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Upload PDF1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f6a34789-b9da-4bc2-8e09-de0b70a5cb93",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c5c799d8966cc12e5e88bf2e0165dd93746cbbf56099c3d4203ea0aead0af8f3"
+  },
+  "id": "gWCxuCbHRgA6bkn9",
+  "tags": []
+}
